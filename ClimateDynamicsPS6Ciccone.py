@@ -13,8 +13,8 @@ import matplotlib.pyplot as plt
 # 5.14718e14 m2 area of earth
 # water depth = 2525m > per square meter there are 2525 m^3 of water
 
-#C = 1.056 * 10**10 # Heat capacity = 2525 m^3 * 4.1813 J/mL*K
-C = 1 #test for now 
+C = 1.056 * 10**10 # Heat capacity = 2525 m^3 * 4.1813 J/mL*K
+#C = 1 #test for now 
 sigma = 5.67*10**-8 # Stefan Boltzman Constant
 
 Eg = 0.95 # emissivity of Earth's surface
@@ -33,7 +33,6 @@ aIce = 0.75 # albedo of ice-covered regions
 
 dIdT = (fIceMax - fIceMin)/(Tmin - Tmax)
 atmosphereEffect = ((2-f)/(Eg*(2-Ea)))**0.25	
-print atmosphereEffect
 
 # Calculate solar flux as function of temperature (which affects albedo)
 def solarFluxFunction(temp):
@@ -56,7 +55,6 @@ def albedo(temp):
 # Calculate OLR as a function of surface temperature
 def emitFlux(temp):
 	tEmit = temp / atmosphereEffect
-	print (tEmit**4) * sigma
 	return (tEmit**4) * sigma
 
 # Calculate difference in temperature as function of incoming and outgoing flux
@@ -81,31 +79,26 @@ for t in albedoTemp:
 	OLRList.append(FoutOfT)
 	SolarList.append(FinOfT)
 	
-
+seconds = 3.15569 * 10**7 # number of seconds in a year
 # Question 2 simulation
 
 simulationTempList = []
 yearList = []
 def simulation(Tinit):
-	alb = albedo(Tinit)
 	OLR = emitFlux(Tinit)
 	SolarIn = solarFluxFunction(Tinit)
-	dT = TempDiffFunction(SolarIn, OLR)
+	dT = TempDiffFunction(SolarIn, OLR) * seconds
 	simTemp = Tinit
 	year = 0
-	while year <= 5000:
+	while year <= 1000:
 		simTemp += dT
-		alb = albedo(simTemp)
 		OLR = emitFlux(simTemp)
 		SolarIn = solarFluxFunction(simTemp)
-		dT = TempDiffFunction(SolarIn, OLR)
+		dT = TempDiffFunction(SolarIn, OLR) * seconds
 		year += 1
-		print simTemp, "; ", SolarIn, "; ", OLR, "; ", year, "; ", alb
-
 
 		simulationTempList.append(simTemp)
 		yearList.append(year)
-		#print simTemp, "; ", year, "; ", dT
 	
 	#print simulationTempList
 	# Question 2 part a - plot Temp simulation
