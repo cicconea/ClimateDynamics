@@ -7,25 +7,25 @@ import matplotlib.pyplot as plt
 
 # Energy Balance: dE(Earth)/dt = F(sun to earth) - OLR = C * dT/dt
 
-V = 1.3*10**9 # Volume of water on earth in km^3
-R = 6400 # Earth's radius in km
-sigma = 5.67*10**-8 # Stefan Boltzman Constant
-
+# V = 1.3*10**9 # Volume of water on earth in km^3
+# R = 6400.0 # Earth's radius in km
 # 1.3*10^18 m^3 volume of water
 # 5.14718e14 m2 area of earth
 # water depth = 2525m > per square meter there are 2525 m^3 of water
 
-C = 1.056 * 10**10 # Heat capacity = 2525 m^3 * 4.1813 J/mL*K
+#C = 1.056 * 10**10 # Heat capacity = 2525 m^3 * 4.1813 J/mL*K
+C = 1 #test for now 
+sigma = 5.67*10**-8 # Stefan Boltzman Constant
 
 Eg = 0.95 # emissivity of Earth's surface
 Ea = 0.9 # emissivity of atmosphere
 f = 0.23 # aborption by atmosphere of incoming solar radiation
 
-S0 = 1368 # incoming solar flux W/m^2
+S0 = 1368.0 # incoming solar flux W/m^2
 alphaBar = 0.3 # average albedo
 
-Tmax = 296 # kelvin
-Tmin = 277 # kelvin
+Tmax = 296.0 # kelvin
+Tmin = 277.0 # kelvin
 fIceMax = 0.4 # % of world covered by ice
 fIceMin = 0 # % of world covered by ice
 aFree = 0.07 # albedo of ice-free regions
@@ -33,7 +33,7 @@ aIce = 0.75 # albedo of ice-covered regions
 
 dIdT = (fIceMax - fIceMin)/(Tmin - Tmax)
 atmosphereEffect = ((2-f)/(Eg*(2-Ea)))**0.25	
-
+print atmosphereEffect
 
 # Calculate solar flux as function of temperature (which affects albedo)
 def solarFluxFunction(temp):
@@ -56,14 +56,15 @@ def albedo(temp):
 # Calculate OLR as a function of surface temperature
 def emitFlux(temp):
 	tEmit = temp / atmosphereEffect
-	return numpy.power(tEmit,4)*sigma
+	print (tEmit**4) * sigma
+	return (tEmit**4) * sigma
 
 # Calculate difference in temperature as function of incoming and outgoing flux
 def TempDiffFunction(Fin, emitFlux):
 	dTdt = (Fin - emitFlux)/C
 	return dTdt
 
-Tinit = 287.0 # Vary this 
+Tinit = 250.0 # Vary this 
 
 albedoCalc = []		# Albedo result initialization
 OLRList = [] 		# OLR flux result initialization
@@ -86,20 +87,22 @@ for t in albedoTemp:
 simulationTempList = []
 yearList = []
 def simulation(Tinit):
-	simAlbedo = albedo(Tinit)
+	alb = albedo(Tinit)
 	OLR = emitFlux(Tinit)
 	SolarIn = solarFluxFunction(Tinit)
-	dT = TempDiffFunction(SolarIn, OLR)*100
+	dT = TempDiffFunction(SolarIn, OLR)
 	simTemp = Tinit
 	year = 0
 	while year <= 5000:
 		simTemp += dT
-		print simTemp
-		simAlbedo = albedo(simTemp)
+		alb = albedo(simTemp)
 		OLR = emitFlux(simTemp)
 		SolarIn = solarFluxFunction(simTemp)
-		dT = TempDiffFunction(SolarIn, OLR)*100
-		year += 100
+		dT = TempDiffFunction(SolarIn, OLR)
+		year += 1
+		print simTemp, "; ", SolarIn, "; ", OLR, "; ", year, "; ", alb
+
+
 		simulationTempList.append(simTemp)
 		yearList.append(year)
 		#print simTemp, "; ", year, "; ", dT
