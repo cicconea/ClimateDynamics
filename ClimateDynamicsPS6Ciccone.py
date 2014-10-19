@@ -17,7 +17,6 @@ sigma = 5.67*10**-8 # Stefan Boltzman Constant
 
 C = 1.056 * 10**10 # Heat capacity = 2525 m^3 * 4.1813 J/mL*K
 
-
 Eg = 0.95 # emissivity of Earth's surface
 Ea = 0.9 # emissivity of atmosphere
 f = 0.23 # aborption by atmosphere of incoming solar radiation
@@ -45,7 +44,7 @@ def solarFluxFunction(temp):
 
 # Calculate Earth's albedo as function of temperature
 def albedo(temp):
-	if temp > Tmax: # add later
+	if temp > Tmax: 
 		icefrac = fIceMin
 	elif temp < Tmin:
 		icefrac = fIceMax
@@ -64,7 +63,7 @@ def TempDiffFunction(Fin, emitFlux):
 	dTdt = (Fin - emitFlux)/C
 	return dTdt
 
-Tinit = 287 # Vary this 
+Tinit = 287.0 # Vary this 
 
 albedoCalc = []		# Albedo result initialization
 OLRList = [] 		# OLR flux result initialization
@@ -83,35 +82,55 @@ for t in albedoTemp:
 	
 
 # Question 2 simulation
+
+simulationTempList = []
+yearList = []
 def simulation(Tinit):
-	simAlbedo = albedoCalc(Tinit)
+	simAlbedo = albedo(Tinit)
 	OLR = emitFlux(Tinit)
 	SolarIn = solarFluxFunction(Tinit)
-	dT = TempDiffFunction(SolarIn, OLR)
+	dT = TempDiffFunction(SolarIn, OLR)*100
+	simTemp = Tinit
+	year = 0
+	while year <= 5000:
+		simTemp += dT
+		print simTemp
+		simAlbedo = albedo(simTemp)
+		OLR = emitFlux(simTemp)
+		SolarIn = solarFluxFunction(simTemp)
+		dT = TempDiffFunction(SolarIn, OLR)*100
+		year += 100
+		simulationTempList.append(simTemp)
+		yearList.append(year)
+		#print simTemp, "; ", year, "; ", dT
+	
+	#print simulationTempList
+	# Question 2 part a - plot Temp simulation
+	plt.plot(yearList, simulationTempList)
+	plt.title("Temperature Simulation")
+	plt.ylabel("Temp (K)")	
+	plt.xlabel("Year from Simulation Start")
+	plt.show()
 
-	while dT != 0:
-		simTemp = 
 
-
-
-
+simulation(Tinit)
 
 
 # Question 1 part a - plot albedo vs T
-plt.plot(albedoTemp, albedoCalc)
-plt.title("Surface Albedo as Function of Temperature")
-plt.ylabel("Albedo")
-plt.xlabel("Temp (K)")
-plt.show()
+#plt.plot(albedoTemp, albedoCalc)
+#plt.title("Surface Albedo as Function of Temperature")
+#plt.ylabel("Albedo")
+#plt.xlabel("Temp (K)")
+#plt.show()
 
 # Question 1 part b - plot OLR and FSolar as function of Temp
-plt.plot(albedoTemp, OLRList, label="OLR")
-plt.plot(albedoTemp, SolarList, label="Solar Flux")
-plt.legend()
-plt.title("Radiative Flux differences as Function of Temperature")
-plt.ylabel("Flux (W/m^2")
-plt.xlabel("Temp (K)")
-plt.show()
+#plt.plot(albedoTemp, OLRList, label="OLR")
+#plt.plot(albedoTemp, SolarList, label="Solar Flux")
+#plt.legend()
+#plt.title("Radiative Flux differences as Function of Temperature")
+#plt.ylabel("Flux (W/m^2")
+#plt.xlabel("Temp (K)")
+#plt.show()
 
 
 
