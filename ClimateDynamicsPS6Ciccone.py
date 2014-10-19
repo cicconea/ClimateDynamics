@@ -82,15 +82,16 @@ for t in albedoTemp:
 seconds = 3.15569 * 10**7 # number of seconds in a year
 # Question 2 simulation
 
-simulationTempList = []
-yearList = []
+
 def simulation(Tinit):
+	simulationTempList = []
+	yearList = []
 	OLR = emitFlux(Tinit)
 	SolarIn = solarFluxFunction(Tinit)
 	dT = TempDiffFunction(SolarIn, OLR) * seconds
 	simTemp = Tinit
 	year = 0
-	while year <= 1000:
+	for year in range(0,1000,1):
 		simTemp += dT
 		OLR = emitFlux(simTemp)
 		SolarIn = solarFluxFunction(simTemp)
@@ -99,17 +100,31 @@ def simulation(Tinit):
 
 		simulationTempList.append(simTemp)
 		yearList.append(year)
+	return simulationTempList
 	
 	#print simulationTempList
 	# Question 2 part a - plot Temp simulation
-	plt.plot(yearList, simulationTempList)
-	plt.title("Temperature Simulation")
-	plt.ylabel("Temp (K)")	
-	plt.xlabel("Year from Simulation Start")
-	plt.show()
+	#plt.plot(yearList, simulationTempList)
+	#plt.title("Temperature Simulation")
+	#plt.ylabel("Temp (K)")	
+	#plt.xlabel("Year from Simulation Start")
+	#plt.show()
+
+yearRange = range(0,1000,1)
+simulationList = []
+tempRangeforSim = range(100, 400, 10)
+for simTemp in tempRangeforSim:
+	simlist = simulation(simTemp)
+	simulationList.append(simlist)
 
 
-simulation(Tinit)
+for i in range(0, len(simulationList)):
+	plt.plot(yearRange, simulationList[i], label = 10*i + 100)
+
+plt.title("Equilibrium Temp as Function of Initial Temp")
+plt.ylabel("Surface Temperature (K)")
+plt.xlabel("Year from Simulation Start")
+plt.show()
 
 
 # Question 1 part a - plot albedo vs T
